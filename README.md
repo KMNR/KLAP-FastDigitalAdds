@@ -23,6 +23,8 @@ Which creates the standalone executable.
 
 Then use InnoSetup on the "installer.iss" to build the setup application
 
+The installer will appear in the Output directory.
+
 Using the setup utility will automatically create the shortcuts in windows explorer.
 
 Using This Tool
