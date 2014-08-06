@@ -60,11 +60,11 @@ def choose_option(option_lst):
 
 def wait_and_exit(msg,code=1):
     """
-    Prints an error message. Waits to exit program until user presses enter.
+    Prints an error message. Waits to sys.exit program until user presses enter.
     """
     print msg
     raw_input("Press ENTER to continue")
-    exit(code)
+    sys.exit(code)
 
 def guess_title(filename):
     """
@@ -88,7 +88,7 @@ def main():
     # Help the user
     if len(sys.argv) != 2:
         print "Usage: {} /PATH/TO/ALBUM/LOCATION".format(sys.argv[0])
-        exit(1)
+        sys.exit(1)
 
     # Set the active directory to the one being scanned
     os.chdir(sys.argv[1])
