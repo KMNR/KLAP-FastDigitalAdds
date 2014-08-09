@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "KLAP Add Shortcut"
-#define MyAppVersion "0.1"
+#define MyAppVersion "0.2"
 #define MyAppPublisher "KMNR (Stephen Jackson)"
 #define MyAppURL "klap.kmnr.org"
 #define MyAppExeName "digital_add.exe"

@@ -14,6 +14,7 @@ import webbrowser
 import traceback
 import re
 import exceptions
+import zlib
 
 DEBUG = False
 KLAP_URL = "http://klap.kmnr.org/lib/json/"
@@ -77,6 +78,19 @@ def guess_title(filename):
         return (r.group(1),r.group(2))
     else:
         return (None, name)
+        
+def open_klap(obj):
+    # Code it as json
+    js = json.dumps(obj)
+    jsz = zlib.compress(js,9)
+    # Make a query string dict
+    dic = {'data':jsz,'z':1}
+    # Encode it as a query string
+    qs = urlencode(dic)
+    # Determine target url
+    final_url = "{}?{}".format(KLAP_URL,qs)
+    # Open up KLAP!
+    webbrowser.open_new_tab(final_url)
             
 def main():
     """
@@ -169,16 +183,7 @@ def main():
            'tracks': tracks,
           }
 
-    # Code it as json
-    js = json.dumps(obj)
-    # Make a query string dict
-    dic = {'data':js}
-    # Encode it as a query string
-    qs = urlencode(dic)
-    # Determine target url
-    final_url = "{}?{}".format(KLAP_URL,qs)
-    # Open up KLAP!
-    webbrowser.open_new_tab(final_url)
+    open_klap(obj)
 
 if __name__ == "__main__":
     try:
