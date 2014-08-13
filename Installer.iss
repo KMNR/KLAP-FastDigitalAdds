@@ -7,6 +7,8 @@
 #define MyAppURL "klap.kmnr.org"
 #define MyAppExeName "digital_add.exe"
 
+#expr Exec("python setup.py py2exe")
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.

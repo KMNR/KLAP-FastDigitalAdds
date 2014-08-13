@@ -105,8 +105,8 @@ def main():
         sys.exit(1)
 
     # Set the active directory to the one being scanned
-    os.chdir(sys.argv[1])
-    path = os.getcwd()
+    os.chdir(unicode(sys.argv[1]))
+    path = unicode(os.getcwd())
 
     tracks = []
     album_names = []
@@ -120,7 +120,7 @@ def main():
         if os.path.isdir(fullpath):
             continue
         # Some debug stuff...
-        print "File: {}".format(song),
+        print "File: {}".format(normalize(song)),
         # Mutagen lets us read the metadata
         audio = mutagen.File(fullpath,easy=True)
         if audio == None:
@@ -132,21 +132,35 @@ def main():
             print audio.pprint()
         # If it's retarded you could have a lot of artist data, so we'll
         # eventually have the user pick just one
-        album_names += audio['album']
-        artist_names += audio['artist']
+        try:
+            album_names += audio['album']
+        except KeyError:
+            pass
+            
+        try:
+            artist_names += audio['artist']
+            if len(audio['artist']) > 0:
+                track_artist = normalize(audio['artist'][0])
+            else:
+                track_artist = None
+        except KeyError:
+            track_artist = None
+            
         try:
             number = audio['tracknumber'][0].split('/')[0]
         except KeyError:
             number = None
+            
         # Add it to the tracks list
+        
+        d = None
         try:
             title = normalize(audio['title'][0])
             # If we couldn't get a track number from the metadata we will
             # guess it with our counter.
             if number == None:
                 number = c
-            tracks.append({'title': title,
-                           'number':int(number)})
+            d = {'title': title, 'number':int(number)}
         except KeyError:
             (ntmp,title) = guess_title(song)
             if ntmp != None:
@@ -155,7 +169,11 @@ def main():
                 # The filename didn't give us a number and the metadata didn't
                 # Either, give up!
                 wait_and_exit("I can't give this track a number, Aborting.")
-            tracks.append({'title':title, 'number':int(number)})
+            d = {'title':title, 'number':int(number)}
+        if d:
+            d['artist'] = track_artist
+            tracks.append(d)
+        
         # Increase the track number if we only have some of the data
         c += 1
     
@@ -171,18 +189,23 @@ def main():
     
     # Let the user pick the single album title and artist
     print "Please choose the artist:"
-    artist = choose_option(artist_names)
+    artist = choose_option(artist)
     print "Please Choose The Album Name:"
-    album = choose_option(album_names)
+    album = choose_option(album)
     
     print "\n-----------------------------\n"
     
+    # Remove the artist key if it is the same as the album artist.
+    for track in tracks:
+        if track['artist'] == artist:
+            del track['artist']
+            
     # Make the dict
     obj = {'artist': artist,
            'album': album,
            'tracks': tracks,
           }
-
+          
     open_klap(obj)
 
 if __name__ == "__main__":

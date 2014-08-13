@@ -39,3 +39,15 @@ Limitations
 * If you mess up the artist name, you'll have run it again and manually set the correct name.
 * If metadata isn't available it will probably not work.
 * Weird things can happen if the track numbers are set up correctly.
+
+Changelog
+=======================
+
+v0.1 - Initial Release
+
+v0.2
+   * Added support for zlib compressing url to allow a greater amount of track data to be sent before the upper limit on url length is met.
+   
+v0.3
+   * Adds compilation support to the submitted data
+   * Fixes an issue where strings did not get converted from unicode.
