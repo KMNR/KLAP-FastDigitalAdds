@@ -38,16 +38,16 @@ def choose_option(option_lst):
     entry option, and returns the string the user selected
     """
     final_lst = list(set(option_lst))
-    while 1:
+    while True:
         c = 1
         for item in final_lst:
-            print "{}) {}".format(c,item)
+            print("{}) {}".format(c,item))
             c += 1
-        print "{}) Manually Set".format(c)
+        print("{}) Manually Set".format(c))
         try:
             choice = int(raw_input("Your Choice: "))
         except ValueError:
-            print "You have to enter a number"
+            print("You have to enter a number")
             continue
         if 0 < choice <= len(final_lst):
             return final_lst[choice-1]
@@ -56,14 +56,14 @@ def choose_option(option_lst):
             inp = inp.strip()
             return inp
         else:
-            print "Invalid Choice"
+            print("Invalid Choice")
             continue
 
 def wait_and_exit(msg,code=1):
     """
     Prints an error message. Waits to sys.exit program until user presses enter.
     """
-    print msg
+    print(msg)
     raw_input("Press ENTER to continue")
     sys.exit(code)
 
@@ -73,9 +73,9 @@ def guess_title(filename):
     """
     (name,ext) = os.path.splitext(filename)
     r = re.search("([0-9]+)\W*(\w.+)",name)
-    if r != None:
+    if r is not None:
         # return number, title tuple
-        return (r.group(1),r.group(2))
+        return (r.group(1), r.group(2))
     else:
         return (None, name)
         
@@ -101,7 +101,7 @@ def main():
     
     # Help the user
     if len(sys.argv) != 2:
-        print "Usage: {} /PATH/TO/ALBUM/LOCATION".format(sys.argv[0])
+        print("Usage: {} /PATH/TO/ALBUM/LOCATION".format(sys.argv[0]))
         sys.exit(1)
 
     # Set the active directory to the one being scanned
@@ -120,16 +120,16 @@ def main():
         if os.path.isdir(fullpath):
             continue
         # Some debug stuff...
-        print "File: {}".format(normalize(song)),
+        print("File: {}".format(normalize(song)))
         # Mutagen lets us read the metadata
         audio = mutagen.File(fullpath,easy=True)
         if audio == None:
-            print "Not Audio"
+            print("Not Audio")
             continue
         else:
-            print "Audio File"
+            print("Audio File")
         if DEBUG:
-            print audio.pprint()
+            print(audio.pprint())
         # If it's retarded you could have a lot of artist data, so we'll
         # eventually have the user pick just one
         try:
@@ -185,15 +185,15 @@ def main():
     artist = normalize_list(artist_names)
     album = normalize_list(album_names)
     
-    print "\n-----------------------------\n"
+    print("\n-----------------------------\n")
     
     # Let the user pick the single album title and artist
-    print "Please choose the artist:"
+    print("Please choose the artist:")
     artist = choose_option(artist)
-    print "Please Choose The Album Name:"
+    print("Please Choose The Album Name:")
     album = choose_option(album)
     
-    print "\n-----------------------------\n"
+    print("\n-----------------------------\n")
     
     # Remove the artist key if it is the same as the album artist.
     for track in tracks:
@@ -214,6 +214,8 @@ if __name__ == "__main__":
     except exceptions.SystemExit:
         raise
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print("Unexpected error: {}".format(sys.exc_info()[0]))
         traceback.print_exc()
-        wait_and_exit("Please take a screenshot and e-mail it to engineering@kmnr.org")
+        wait_and_exit("Please take a screenshot and "
+                      "e-mail it to engineering@kmnr.org")
+
