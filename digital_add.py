@@ -19,18 +19,22 @@ import zlib
 DEBUG = False
 KLAP_URL = "http://klap.kmnr.org/lib/json/"
 
+
 def normalize(itm):
     """
     This function removes all the funny characters and downcodes them to an
     ascii equivalent.
     """
-    return unicodedata.normalize('NFKD', itm).encode('ascii', 'ignore')
+    return unicodedata.normalize('NFKD', itm)\
+                      .encode('ascii', 'ignore')
+
 
 def normalize_list(lst):
     """
     Calls normalize on a list of strings.
     """
     return [ normalize(x) for x in lst ]
+
 
 def choose_option(option_lst):
     """
@@ -39,33 +43,39 @@ def choose_option(option_lst):
     """
     final_lst = list(set(option_lst))
     while True:
-        c = 1
-        for item in final_lst:
-            print("{}) {}".format(c,item))
-            c += 1
-        print("{}) Manually Set".format(c))
+        for c, item in enumerate(final_lst, 1):
+            print("{}) {}".format(c, item))
+
+        print("{}) Manually Set".format(c+1))
+
         try:
             choice = int(raw_input("Your Choice: "))
+
         except ValueError:
             print("You have to enter a number")
             continue
+
         if 0 < choice <= len(final_lst):
             return final_lst[choice-1]
+
         elif choice == len(final_lst)+1:
             inp = str(raw_input("Manual Value: "))
             inp = inp.strip()
             return inp
+
         else:
             print("Invalid Choice")
             continue
 
-def wait_and_exit(msg,code=1):
+
+def wait_and_exit(msg, code=1):
     """
     Prints an error message. Waits to sys.exit program until user presses enter.
     """
     print(msg)
     raw_input("Press ENTER to continue")
     sys.exit(code)
+
 
 def guess_title(filename):
     """
@@ -76,9 +86,11 @@ def guess_title(filename):
     if r is not None:
         # return number, title tuple
         return (r.group(1), r.group(2))
+
     else:
         return (None, name)
-        
+    
+
 def open_klap(obj):
     # Code it as json
     js = json.dumps(obj)
@@ -91,7 +103,8 @@ def open_klap(obj):
     final_url = "{}?{}".format(KLAP_URL,qs)
     # Open up KLAP!
     webbrowser.open_new_tab(final_url)
-            
+
+
 def main():
     """
     Scans a folder for music files with metadata. Collects metadata information
@@ -115,25 +128,32 @@ def main():
     c = 1
     # Loop over each file in the folder
     for song in sorted(os.listdir(path)):
-        fullpath = os.path.join(path,song)
+        fullpath = os.path.join(path, song)
+
         # We won't recurse and we can't do stuff with directories
         if os.path.isdir(fullpath):
             continue
+
         # Some debug stuff...
         print("File: {}".format(normalize(song)))
+
         # Mutagen lets us read the metadata
         audio = mutagen.File(fullpath,easy=True)
         if audio == None:
             print("Not Audio")
             continue
+
         else:
             print("Audio File")
+
         if DEBUG:
             print(audio.pprint())
+
         # If it's retarded you could have a lot of artist data, so we'll
         # eventually have the user pick just one
         try:
             album_names += audio['album']
+
         except KeyError:
             pass
             
@@ -143,33 +163,37 @@ def main():
                 track_artist = normalize(audio['artist'][0])
             else:
                 track_artist = None
+
         except KeyError:
             track_artist = None
             
         try:
             number = audio['tracknumber'][0].split('/')[0]
+
         except KeyError:
             number = None
             
         # Add it to the tracks list
-        
         d = None
         try:
             title = normalize(audio['title'][0])
             # If we couldn't get a track number from the metadata we will
             # guess it with our counter.
-            if number == None:
+            if number is None:
                 number = c
             d = {'title': title, 'number':int(number)}
+
         except KeyError:
             (ntmp,title) = guess_title(song)
-            if ntmp != None:
+            if ntmp is not None:
                 number = ntmp
-            elif number == None:
+            elif number is None:
                 # The filename didn't give us a number and the metadata didn't
                 # Either, give up!
                 wait_and_exit("I can't give this track a number, Aborting.")
+
             d = {'title':title, 'number':int(number)}
+
         if d:
             d['artist'] = track_artist
             tracks.append(d)
@@ -190,6 +214,7 @@ def main():
     # Let the user pick the single album title and artist
     print("Please choose the artist:")
     artist = choose_option(artist)
+
     print("Please Choose The Album Name:")
     album = choose_option(album)
     
@@ -203,16 +228,18 @@ def main():
     # Make the dict
     obj = {'artist': artist,
            'album': album,
-           'tracks': tracks,
-          }
+           'tracks': tracks}
           
     open_klap(obj)
+
 
 if __name__ == "__main__":
     try:
         main()
+
     except exceptions.SystemExit:
         raise
+
     except:
         print("Unexpected error: {}".format(sys.exc_info()[0]))
         traceback.print_exc()
