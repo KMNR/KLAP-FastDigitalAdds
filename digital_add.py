@@ -52,7 +52,7 @@ def choose_option(option_lst):
             choice = int(raw_input("Your Choice: "))
 
         except ValueError:
-            print("You have to enter a number")
+            print("You have to enter a number, idiot.")
             continue
 
         if 0 < choice <= len(final_lst):
@@ -64,7 +64,7 @@ def choose_option(option_lst):
             return inp
 
         else:
-            print("Invalid Choice")
+            print("Invalid choice, stupid.")
             continue
 
 
@@ -81,8 +81,8 @@ def guess_title(filename):
     """
     Given a file name, guess the title based on the usual naming styles
     """
-    (name,ext) = os.path.splitext(filename)
-    r = re.search("([0-9]+)\W*(\w.+)",name)
+    name, ext = os.path.splitext(filename)
+    r = re.search("([0-9]+)\W*(\w.+)", name)
     if r is not None:
         # return number, title tuple
         return (r.group(1), r.group(2))
@@ -94,13 +94,17 @@ def guess_title(filename):
 def open_klap(obj):
     # Code it as json
     js = json.dumps(obj)
-    jsz = zlib.compress(js,9)
+    jsz = zlib.compress(js, 9)
+
     # Make a query string dict
     dic = {'data':jsz,'z':1}
+
     # Encode it as a query string
     qs = urlencode(dic)
+
     # Determine target url
-    final_url = "{}?{}".format(KLAP_URL,qs)
+    final_url = "{}?{}".format(KLAP_URL, qs)
+
     # Open up KLAP!
     webbrowser.open_new_tab(final_url)
 
@@ -139,7 +143,7 @@ def main():
 
         # Mutagen lets us read the metadata
         audio = mutagen.File(fullpath,easy=True)
-        if audio == None:
+        if audio is None:
             print("Not Audio")
             continue
 
